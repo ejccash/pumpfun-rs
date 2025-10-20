@@ -40,12 +40,33 @@ create_dir() {
 create_dir "$PROGRAMS_DIR"
 create_dir "$ACCOUNTS_DIR"
 
+# Define RPC endpoints to try in order of preference
+RPC_ENDPOINTS=(
+  "https://public.rpc.solanavibestation.com/"
+  "https://api.mainnet-beta.solana.com"
+  "https://solana-api.projectserum.com"
+  "https://rpc.ankr.com/solana"
+  "https://solana-mainnet.rpc.extrnode.com"
+)
+
 # Download Pump.fun program if it doesn't exist
 PUMPFUN_SO="$PROGRAMS_DIR/pumpfun.so"
 if [ ! -f "$PUMPFUN_SO" ]; then
   echo "Downloading Pump.fun program..."
-  if ! solana program dump -u m 6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P "$PUMPFUN_SO"; then
-    echo "Error: Failed to download Pump.fun program."
+  DOWNLOAD_SUCCESS=false
+  for rpc in "${RPC_ENDPOINTS[@]}"; do
+    echo "Trying RPC endpoint: $rpc"
+    if solana program dump -u "$rpc" 6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P "$PUMPFUN_SO"; then
+      DOWNLOAD_SUCCESS=true
+      echo "Successfully downloaded using $rpc"
+      break
+    else
+      echo "Failed with $rpc, trying next endpoint..."
+    fi
+  done
+  
+  if [ "$DOWNLOAD_SUCCESS" = false ]; then
+    echo "Error: Failed to download Pump.fun program from all RPC endpoints."
     exit 1
   fi
   echo "Downloaded Pump.fun program to $PUMPFUN_SO"
@@ -55,8 +76,20 @@ fi
 MPL_TOKEN_METADATA_SO="$PROGRAMS_DIR/mpl-token-metadata.so"
 if [ ! -f "$MPL_TOKEN_METADATA_SO" ]; then
   echo "Downloading MPL Token Metadata program..."
-  if ! solana program dump -u m metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s "$MPL_TOKEN_METADATA_SO"; then
-    echo "Error: Failed to download MPL Token Metadata program."
+  DOWNLOAD_SUCCESS=false
+  for rpc in "${RPC_ENDPOINTS[@]}"; do
+    echo "Trying RPC endpoint: $rpc"
+    if solana program dump -u "$rpc" metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s "$MPL_TOKEN_METADATA_SO"; then
+      DOWNLOAD_SUCCESS=true
+      echo "Successfully downloaded using $rpc"
+      break
+    else
+      echo "Failed with $rpc, trying next endpoint..."
+    fi
+  done
+  
+  if [ "$DOWNLOAD_SUCCESS" = false ]; then
+    echo "Error: Failed to download MPL Token Metadata program from all RPC endpoints."
     exit 1
   fi
   echo "Downloaded MPL Token Metadata program to $MPL_TOKEN_METADATA_SO"
@@ -67,8 +100,20 @@ PFG_ACCOUNT_JSON="$ACCOUNTS_DIR/4wTV1YmiEkRvAtNtsSGPtUrqRYQMe5SKy2uB4Jjaxnjf.jso
 PFG_ACCOUNT_ADDRESS="4wTV1YmiEkRvAtNtsSGPtUrqRYQMe5SKy2uB4Jjaxnjf"
 if [ ! -f "$PFG_ACCOUNT_JSON" ]; then
   echo "Downloading Pump.fun Global Account data..."
-  if ! solana account -u m --output json --output-file "$PFG_ACCOUNT_JSON" "$PFG_ACCOUNT_ADDRESS"; then
-    echo "Error: Failed to download account data."
+  DOWNLOAD_SUCCESS=false
+  for rpc in "${RPC_ENDPOINTS[@]}"; do
+    echo "Trying RPC endpoint: $rpc"
+    if solana account -u "$rpc" --output json --output-file "$PFG_ACCOUNT_JSON" "$PFG_ACCOUNT_ADDRESS"; then
+      DOWNLOAD_SUCCESS=true
+      echo "Successfully downloaded using $rpc"
+      break
+    else
+      echo "Failed with $rpc, trying next endpoint..."
+    fi
+  done
+  
+  if [ "$DOWNLOAD_SUCCESS" = false ]; then
+    echo "Error: Failed to download account data from all RPC endpoints."
     exit 1
   fi
   echo "Downloaded account data to $PFG_ACCOUNT_JSON"
@@ -79,8 +124,20 @@ PUMPFUN_FEE_CONFIG_JSON="$ACCOUNTS_DIR/8Wf5TiAheLUqBrKXeYg2JtAFFMWtKdG2BSFgqUcPV
 PUMPFUN_FEE_CONFIG_ADDRESS="8Wf5TiAheLUqBrKXeYg2JtAFFMWtKdG2BSFgqUcPVwTt"
 if [ ! -f "$PUMPFUN_FEE_CONFIG_JSON" ]; then
   echo "Downloading Pump.fun Fee Config Account data..."
-  if ! solana account -u m --output json --output-file "$PUMPFUN_FEE_CONFIG_JSON" "$PUMPFUN_FEE_CONFIG_ADDRESS"; then
-    echo "Error: Failed to download fee config account data."
+  DOWNLOAD_SUCCESS=false
+  for rpc in "${RPC_ENDPOINTS[@]}"; do
+    echo "Trying RPC endpoint: $rpc"
+    if solana account -u "$rpc" --output json --output-file "$PUMPFUN_FEE_CONFIG_JSON" "$PUMPFUN_FEE_CONFIG_ADDRESS"; then
+      DOWNLOAD_SUCCESS=true
+      echo "Successfully downloaded using $rpc"
+      break
+    else
+      echo "Failed with $rpc, trying next endpoint..."
+    fi
+  done
+  
+  if [ "$DOWNLOAD_SUCCESS" = false ]; then
+    echo "Error: Failed to download fee config account data from all RPC endpoints."
     exit 1
   fi
   echo "Downloaded fee config account data to $PUMPFUN_FEE_CONFIG_JSON"
@@ -90,8 +147,20 @@ fi
 PUMPFUN_FEE_CONFIG_SO="$PROGRAMS_DIR/pumpfun_fee_config.so"
 if [ ! -f "$PUMPFUN_FEE_CONFIG_SO" ]; then
   echo "Downloading Pump.fun Fee Config program..."
-  if ! solana program dump -u m pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ "$PUMPFUN_FEE_CONFIG_SO"; then
-    echo "Error: Failed to download Pump.fun Fee Config program."
+  DOWNLOAD_SUCCESS=false
+  for rpc in "${RPC_ENDPOINTS[@]}"; do
+    echo "Trying RPC endpoint: $rpc"
+    if solana program dump -u "$rpc" pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ "$PUMPFUN_FEE_CONFIG_SO"; then
+      DOWNLOAD_SUCCESS=true
+      echo "Successfully downloaded using $rpc"
+      break
+    else
+      echo "Failed with $rpc, trying next endpoint..."
+    fi
+  done
+  
+  if [ "$DOWNLOAD_SUCCESS" = false ]; then
+    echo "Error: Failed to download Pump.fun Fee Config program from all RPC endpoints."
     exit 1
   fi
   echo "Downloaded Pump.fun Fee Config program to $PUMPFUN_FEE_CONFIG_SO"
